@@ -3,17 +3,32 @@
   <head>
     <meta charset="UTF-8" />
     <title>Weather App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
   </head>
   <body>
-    <form id="citySearch">
-      <label for="city"></label>
-      <input type="text" id="city" name="city" required autocomplete="off" />
-      <button type="submit">Search</button>
-    </form>
-    <div id="container">
-      <p id="cityName"></p>
-      <p id="country"></p>
-      <p id="weather"></p>
+    <div class="container">
+      <h1>WeatherDB</h1>
+      <form id="citySearch">
+        <label for="city"></label>
+        <input
+          type="text"
+          id="city"
+          name="city"
+          required
+          autocomplete="off"
+          placeholder="Search City"
+        />
+        <label class="switch">
+          <input type="checkbox" id="togBtn" />
+          <div class="slider round">
+            <span class="f">F</span>
+            <span class="c">C</span>
+          </div>
+        </label>
+      </form>
+      <h2 id="cityName"></h2>
+      <div id="graphic"></div>
+      <p id="subData"></p>
     </div>
     <script src="main.js"></script>
   </body>
