@@ -9,8 +9,8 @@ async function getWeather(city, units) {
     const apiKey = "af7be5386c68edc8a11bfc3e58d4d6ac";
     const url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&units=${units}&appid=${apiKey}`;
     const response = await fetch(url, { mode: "cors" });
-    const weatherData = await response.json();
-    div.textContent = processWeatherJson(weatherData).city;
+    const weatherJson = await response.json();
+    return processWeatherJson(weatherJson);
   } catch (err) {
     throw Error(`city not found, ${err}`);
   }
@@ -46,10 +46,19 @@ function processWeatherJson(data) {
   }
 }
 
+function populateDiv(obj) {
+  document.getElementById("cityName").textContent = obj.city;
+  document.getElementById("country").textContent = obj.country;
+  document.getElementById("weather").textContent = obj.weather;
+}
+
 form.onsubmit = (e) => {
   e.preventDefault();
   const formData = new FormData(form);
   const plainFormData = Object.fromEntries(formData.entries());
-  getWeather(plainFormData.city, "imperial");
+  getWeather(plainFormData.city, "imperial").then(function (data) {
+    populateDiv(data);
+  });
+
   e.target.reset();
 };
