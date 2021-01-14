@@ -1,26 +1,43 @@
 import "./style.css";
 import weather from "./weather-api";
+import domController from "./domController";
 
-const form = document.getElementById("citySearch");
-const div = document.createElement("div");
-document.body.appendChild(div);
+const app = (() => {
+  if (!localStorage.getItem("city")) {
+    localStorage.setItem("city", "boulder");
+  }
+  const form = document.getElementById("citySearch");
+  const unitsCheck = document.getElementById("units");
 
-form.onsubmit = (e) => {
-  e.preventDefault();
-  const formData = new FormData(form);
-  const plainFormData = Object.fromEntries(formData.entries());
-  weather.getWeather(plainFormData.city, "imperial").then(function (data) {
-    populateWeatherData(data);
-  });
-  e.target.reset();
-};
+  function checkUnits(bool) {
+    const u = bool ? "imperial" : "metric";
+    return u;
+  }
 
-function populateWeatherData(obj) {
-  document.getElementById(
-    "cityName"
-  ).textContent = `${obj.city}, ${obj.country}`;
-  document.getElementById("graphic").textContent = `${obj.temp}`;
-  document.getElementById(
-    "subData"
-  ).textContent = `Feels like ${obj.feelsLike} | ${obj.description} | High ${obj.high} | Low ${obj.low}`;
-}
+  window.onload = () => {
+    const units = checkUnits(unitsCheck.checked);
+    weather.getWeather(localStorage.getItem("city"), units).then((data) => {
+      domController.populateWeatherData(data, units);
+    });
+  };
+
+  form.onsubmit = (e) => {
+    e.preventDefault();
+    const formData = new FormData(form);
+    const plainFormData = Object.fromEntries(formData.entries());
+    const units = checkUnits(unitsCheck.checked);
+    weather.getWeather(plainFormData.city, units).then((data) => {
+      domController.populateWeatherData(data, units);
+    });
+    localStorage.setItem("city", e.target.city.value);
+    e.target.city.value = "";
+  };
+
+  unitsCheck.onchange = () => {
+    const units = checkUnits(unitsCheck.checked);
+    weather.getWeather(localStorage.getItem("city"), units).then((data) => {
+      domController.populateWeatherData(data, units);
+    });
+    form.city.value = "";
+  };
+})();

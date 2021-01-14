@@ -1,16 +1,43 @@
 const weather = (() => {
-  function processWeatherJson(data) {
+  function utcToLocalTime(utc) {
+    const d = new Date(utc * 1000);
+    let correctedHours = d.getHours();
+    let correctedMinutes = d.getMinutes();
+    let sign = "am";
+    if (d.getHours() > 12) {
+      correctedHours = d.getHours() % 12;
+      sign = "pm";
+    }
+    if (d.getMinutes() < 10) {
+      correctedMinutes = `0${correctedMinutes}`;
+    }
+    return `${correctedHours}:${correctedMinutes} ${sign}`;
+  }
+
+  async function processWeatherJson(data) {
     try {
       const city = data.name;
       const { country } = data.sys;
       const mainWeather = data.weather[0].main;
       const { description } = data.weather[0];
-      const { temp } = data.main;
-      const feelsLike = data.main.feels_like;
-      const high = data.main.temp_max;
-      const low = data.main.temp_min;
-      const { sunrise } = data.sys;
-      const { sunset } = data.sys;
+      let { temp } = data.main;
+      temp = Math.trunc(temp);
+      let feelsLike = data.main.feels_like;
+      feelsLike = Math.trunc(feelsLike);
+      let high = data.main.temp_max;
+      high = Math.trunc(high);
+      let low = data.main.temp_min;
+      low = Math.trunc(low);
+      let { sunrise } = data.sys;
+      sunrise = utcToLocalTime(sunrise);
+      let { sunset } = data.sys;
+      sunset = utcToLocalTime(sunset);
+      const iconCode = data.weather[0].icon;
+      const response = await fetch(
+        `http://openweathermap.org/img/wn/${iconCode}@2x.png`,
+        { mode: "cors" }
+      );
+      const iconUrl = response.url;
 
       return {
         city,
@@ -23,6 +50,7 @@ const weather = (() => {
         low,
         sunrise,
         sunset,
+        iconUrl,
       };
     } catch (err) {
       throw Error("data undefined");

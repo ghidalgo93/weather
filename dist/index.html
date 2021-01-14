@@ -18,16 +18,17 @@
           autocomplete="off"
           placeholder="Search City"
         />
-        <label class="switch">
-          <input type="checkbox" id="togBtn" />
+        <label for="units" class="switch">
+          <input type="checkbox" id="units" name="units" />
           <div class="slider round">
-            <span class="f">F</span>
-            <span class="c">C</span>
+            <span class="f">F &#176</span>
+            <span class="c">C &#176</span>
           </div>
         </label>
       </form>
       <h2 id="cityName"></h2>
-      <div id="graphic"></div>
+	  <div id="mainData"></div>
+	  <img id='icon'></img>
       <p id="subData"></p>
     </div>
     <script src="main.js"></script>
